@@ -11,7 +11,7 @@ spring:
     password: ${POSTGRES_PASSWORD}
     url: jdbc:postgresql://${HOST}/${POSTGRES_DB}
     change-log: classpath:db/db.changelog.yaml
-    enabled: false
+    enabled: true
   jpa:
     hibernate:
       ddl-auto: none
