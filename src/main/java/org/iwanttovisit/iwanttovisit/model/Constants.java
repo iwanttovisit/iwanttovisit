@@ -1,4 +1,4 @@
-package org.iwanttovisit.iwanttovisit.model.criteria;
+package org.iwanttovisit.iwanttovisit.model;
 
 public class Constants {
 

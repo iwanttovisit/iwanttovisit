@@ -129,10 +129,12 @@ public class UserServiceImpl implements UserService {
     public void delete(
             final UUID id
     ) {
-        User user = getById(id);
-        user.setStatus(Status.DELETED);
-        user.setUpdated(LocalDateTime.now());
-        repository.save(user);
+        User user = getById(id, true);
+        if (user.getStatus() != Status.DELETED) {
+            user.setStatus(Status.DELETED);
+            user.setUpdated(LocalDateTime.now());
+            repository.save(user);
+        }
     }
 
     @Override
@@ -140,7 +142,12 @@ public class UserServiceImpl implements UserService {
     public void block(
             final UUID id
     ) {
-
+        User user = getById(id);
+        if (user.getStatus() != Status.DELETED) {
+            user.setStatus(Status.BLOCKED);
+            user.setUpdated(LocalDateTime.now());
+            repository.save(user);
+        }
     }
 
     @Override
@@ -148,7 +155,12 @@ public class UserServiceImpl implements UserService {
     public void unblock(
             final UUID id
     ) {
-
+        User user = getById(id, true);
+        if (user.getStatus() == Status.BLOCKED) {
+            user.setStatus(Status.ACTIVE);
+            user.setUpdated(LocalDateTime.now());
+            repository.save(user);
+        }
     }
 
 }
