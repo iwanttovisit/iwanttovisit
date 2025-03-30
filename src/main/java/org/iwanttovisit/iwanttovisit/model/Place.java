@@ -30,7 +30,7 @@ public class Place extends BaseEntity {
     @Enumerated(value = EnumType.STRING)
     private Category category;
 
-    private boolean visited;
+    private boolean isVisited;
 
     @ManyToOne(fetch = FetchType.LAZY)
     private Map map;

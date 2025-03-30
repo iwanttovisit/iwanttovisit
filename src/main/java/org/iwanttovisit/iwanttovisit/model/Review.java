@@ -26,7 +26,6 @@ public class Review extends BaseEntity {
     private User author;
 
     private String text;
-
     private int mark;
 
 }
