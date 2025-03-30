@@ -2,6 +2,7 @@ package org.iwanttovisit.iwanttovisit.model.criteria;
 
 import lombok.Getter;
 import lombok.experimental.SuperBuilder;
+import org.iwanttovisit.iwanttovisit.model.Constants;
 import org.iwanttovisit.iwanttovisit.model.Status;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;

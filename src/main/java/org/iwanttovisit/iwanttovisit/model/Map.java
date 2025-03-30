@@ -27,4 +27,12 @@ public class Map extends BaseEntity {
 
     private boolean isPublic;
 
+    public enum SortType {
+
+        CREATED,
+        UPDATED,
+        NAME
+
+    }
+
 }
