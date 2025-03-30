@@ -1,0 +1,8 @@
+package org.iwanttovisit.iwanttovisit.model;
+
+public enum Status {
+
+    ACTIVE,
+    DELETED
+
+}
