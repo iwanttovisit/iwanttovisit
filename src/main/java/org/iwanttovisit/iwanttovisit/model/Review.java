@@ -28,4 +28,11 @@ public class Review extends BaseEntity {
     private String text;
     private int mark;
 
+    public enum SortType {
+
+        CREATED,
+        MARK
+
+    }
+
 }

@@ -38,4 +38,13 @@ public class Place extends BaseEntity {
     @ManyToOne(fetch = FetchType.EAGER)
     private User author;
 
+    public enum SortType {
+
+        CREATED,
+        UPDATED,
+        NAME,
+        RATING
+
+    }
+
 }
