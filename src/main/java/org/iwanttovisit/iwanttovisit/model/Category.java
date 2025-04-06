@@ -5,6 +5,7 @@ public enum Category {
     CAFE,
     HOBBY,
     SPORT,
+    ENTERTAINMENT,
     NATURE
 
 }
