@@ -57,6 +57,7 @@ public class PlaceServiceImpl implements PlaceService {
     }
 
     @Override
+    @Transactional
     public Place create(
             final Place entity
     ) {
@@ -64,6 +65,7 @@ public class PlaceServiceImpl implements PlaceService {
     }
 
     @Override
+    @Transactional
     public Place update(
             final Place entity
     ) {
@@ -78,6 +80,7 @@ public class PlaceServiceImpl implements PlaceService {
     }
 
     @Override
+    @Transactional
     public void delete(
             final UUID id
     ) {
@@ -90,6 +93,7 @@ public class PlaceServiceImpl implements PlaceService {
     }
 
     @Override
+    @Transactional
     public void block(
             final UUID id
     ) {
@@ -102,6 +106,7 @@ public class PlaceServiceImpl implements PlaceService {
     }
 
     @Override
+    @Transactional
     public void unblock(
             final UUID id
     ) {
