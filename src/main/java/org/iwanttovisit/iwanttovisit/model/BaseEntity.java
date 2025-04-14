@@ -50,6 +50,13 @@ public abstract class BaseEntity implements Serializable {
         this.updated = LocalDateTime.now();
     }
 
+    public BaseEntity(
+            final UUID id
+    ) {
+        this();
+        this.id = id;
+    }
+
     @Override
     public boolean equals(
             final Object o

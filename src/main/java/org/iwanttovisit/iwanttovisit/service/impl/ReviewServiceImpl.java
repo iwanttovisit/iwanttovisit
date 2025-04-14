@@ -7,6 +7,7 @@ import org.iwanttovisit.iwanttovisit.model.criteria.ReviewCriteria;
 import org.iwanttovisit.iwanttovisit.model.exception.ResourceNotFoundException;
 import org.iwanttovisit.iwanttovisit.repository.ReviewRepository;
 import org.iwanttovisit.iwanttovisit.repository.spec.ReviewSpec;
+import org.iwanttovisit.iwanttovisit.service.ReviewService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;

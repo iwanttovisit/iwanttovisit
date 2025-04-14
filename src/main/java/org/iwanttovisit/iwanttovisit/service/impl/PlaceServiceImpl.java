@@ -7,6 +7,7 @@ import org.iwanttovisit.iwanttovisit.model.criteria.PlaceCriteria;
 import org.iwanttovisit.iwanttovisit.model.exception.ResourceNotFoundException;
 import org.iwanttovisit.iwanttovisit.repository.PlaceRepository;
 import org.iwanttovisit.iwanttovisit.repository.spec.PlaceSpec;
+import org.iwanttovisit.iwanttovisit.service.PlaceService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;

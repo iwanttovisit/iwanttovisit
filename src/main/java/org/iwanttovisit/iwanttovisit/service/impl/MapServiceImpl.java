@@ -7,6 +7,7 @@ import org.iwanttovisit.iwanttovisit.model.criteria.MapCriteria;
 import org.iwanttovisit.iwanttovisit.model.exception.ResourceNotFoundException;
 import org.iwanttovisit.iwanttovisit.repository.MapRepository;
 import org.iwanttovisit.iwanttovisit.repository.spec.MapSpec;
+import org.iwanttovisit.iwanttovisit.service.MapService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;

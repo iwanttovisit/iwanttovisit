@@ -44,3 +44,10 @@ server:
 logging:
   level:
     root: INFO
+
+jwt:
+  secret: ${JWT_SECRET}
+  access: ${JWT_ACCESS_DURATION}
+  refresh: ${JWT_REFRESH_DURATION}
+  activation: ${JWT_ACTIVATION_DURATION}
+  reset: ${JWT_RESET_DURATION}

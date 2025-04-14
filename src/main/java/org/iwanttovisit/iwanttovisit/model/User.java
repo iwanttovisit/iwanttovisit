@@ -15,6 +15,7 @@ import lombok.ToString;
 
 import java.time.LocalDateTime;
 import java.util.Set;
+import java.util.UUID;
 
 @Entity
 @Table(name = "users")
@@ -38,6 +39,12 @@ public class User extends BaseEntity {
     @CollectionTable(name = "user_roles")
     @Enumerated(EnumType.STRING)
     private Set<Role> userRoles;
+
+    public User(
+            final UUID id
+    ) {
+        super(id);
+    }
 
     public enum Role {
 
