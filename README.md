@@ -43,11 +43,6 @@ All core entities extends `BaseEntity` - parent entity with common fields -
 `User` represents a user of an app. Users can register and login into
 account to get access to their maps and places.
 
-User can have several roles:
-
-* `ROLE_USER` - base role, every authenticated user has this role by default
-* `ROLE_ADMIN` - role for admins. It allows to see private maps and places
-
 ### Map
 
 `Map` represents a set of places that user wants to visit.

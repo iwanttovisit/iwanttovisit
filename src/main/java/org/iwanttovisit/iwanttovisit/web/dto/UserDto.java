@@ -8,10 +8,8 @@ import lombok.Setter;
 import lombok.ToString;
 import org.hibernate.validator.constraints.Length;
 import org.iwanttovisit.iwanttovisit.model.Constants;
-import org.iwanttovisit.iwanttovisit.model.User;
 
 import java.time.LocalDateTime;
-import java.util.List;
 
 @Getter
 @Setter
@@ -36,9 +34,6 @@ public class UserDto extends BaseEntityDto {
             groups = {OnCreate.class, OnUpdate.class}
     )
     private String name;
-
-    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
-    private List<User.Role> userRoles;
 
     @NotNull(
             message = "Password can't be null.",

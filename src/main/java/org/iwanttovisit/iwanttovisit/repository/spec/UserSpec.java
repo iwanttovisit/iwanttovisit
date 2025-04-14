@@ -35,20 +35,6 @@ public interface UserSpec {
         };
     }
 
-    static Specification<User> hasRole(
-            final User.Role role
-    ) {
-        return (root, query, criteriaBuilder) -> {
-            if (role == null) {
-                return criteriaBuilder.conjunction();
-            }
-            return criteriaBuilder.and(
-                    root.join("userRoles")
-                            .in(role)
-            );
-        };
-    }
-
     static Specification<User> hasStatus(
             final Status status
     ) {
