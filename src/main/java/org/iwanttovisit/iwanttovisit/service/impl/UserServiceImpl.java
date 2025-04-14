@@ -1,15 +1,20 @@
 package org.iwanttovisit.iwanttovisit.service.impl;
 
+import io.github.ilyalisov.jwt.service.TokenService;
 import lombok.RequiredArgsConstructor;
 import org.iwanttovisit.iwanttovisit.model.Status;
 import org.iwanttovisit.iwanttovisit.model.User;
 import org.iwanttovisit.iwanttovisit.model.criteria.UserCriteria;
 import org.iwanttovisit.iwanttovisit.model.exception.ResourceAlreadyExistsException;
 import org.iwanttovisit.iwanttovisit.model.exception.ResourceNotFoundException;
+import org.iwanttovisit.iwanttovisit.model.exception.TokenNotValidException;
 import org.iwanttovisit.iwanttovisit.repository.UserRepository;
 import org.iwanttovisit.iwanttovisit.repository.spec.UserSpec;
+import org.iwanttovisit.iwanttovisit.service.UserService;
+import org.iwanttovisit.iwanttovisit.web.security.TokenType;
 import org.springframework.data.domain.Page;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -23,6 +28,8 @@ import java.util.UUID;
 public class UserServiceImpl implements UserService {
 
     private final UserRepository repository;
+    private final TokenService jwtService;
+    private final PasswordEncoder passwordEncoder;
 
     @Override
     public User getById(
@@ -34,6 +41,18 @@ public class UserServiceImpl implements UserService {
         if (showAnyway) {
             return user;
         }
+        if (user.getStatus() != Status.ACTIVE) {
+            throw new ResourceNotFoundException();
+        }
+        return user;
+    }
+
+    @Override
+    public User getByUsername(
+            final String username
+    ) {
+        User user = repository.findByUsername(username)
+                .orElseThrow(ResourceNotFoundException::new);
         if (user.getStatus() != Status.ACTIVE) {
             throw new ResourceNotFoundException();
         }
@@ -61,44 +80,33 @@ public class UserServiceImpl implements UserService {
     ) {
         if (existsByUsername(entity.getUsername())) {
             throw new ResourceAlreadyExistsException(
-                    "Этот email недоступен."
+                    "This email can not be used."
             );
         }
-        //TODO
-//        user.setPassword(passwordEncoder.encode(user.getPassword()));
+        entity.setPassword(passwordEncoder.encode(entity.getPassword()));
         entity.setStatus(Status.NOT_ACTIVE);
         entity.setUserRoles(Set.of(User.Role.ROLE_USER));
-        repository.save(entity);
-        //TODO
-//        String token = jwtService.create(
-//                TokenParameters.builder(
-//                                user.getUsername(),
-//                                TokenType.ACTIVATION.name(),
-//                                jwtProperties.getActivation()
-//                        )
-//                        .claim("userId", user.getId())
-//                        .build()
-//        );
-//        MailParameters params = MailParameters.builder(
-//                        user.getUsername(),
-//                        MailType.ACTIVATION.name()
-//                )
-//                .property("token", token)
-//                .property(
-//                        "name",
-//                        user.getName() != null
-//                                ? user.getName()
-//                                : "Пользователь"
-//                )
-//                .property(
-//                        "link",
-//                        "https://reviewer.of.by/auth/confirm?token=" + token
-//                )
-//                .build();
-//        mailService.send(params);
-        return repository.findOne(
-                UserSpec.hasUsername(entity.getUsername())
-        ).get();
+        entity.setLastSeen(LocalDateTime.now());
+        return repository.save(entity);
+    }
+
+    @Override
+    public void activate(
+            final String token
+    ) {
+        if (jwtService.isExpired(token)) {
+            throw new TokenNotValidException("Token expired.");
+        }
+        if (!jwtService.getType(token).equals(TokenType.ACTIVATION.name())) {
+            throw new TokenNotValidException("Token type is incorrect.");
+        }
+        UUID userId = UUID.fromString(
+                (String) jwtService.claim(token, "userId")
+        );
+        User user = getById(userId, true);
+        user.setStatus(Status.ACTIVE);
+        user.setUpdated(LocalDateTime.now());
+        repository.save(user);
     }
 
     public boolean existsByUsername(
@@ -116,12 +124,21 @@ public class UserServiceImpl implements UserService {
     ) {
         User user = getById(entity.getId());
         user.setName(entity.getName());
-        //TODO
-//        if (entity.getPassword() != null) {
-//            user.setPassword(passwordEncoder.encode(user.getPassword()));
-//        }
+        if (entity.getPassword() != null) {
+            user.setPassword(passwordEncoder.encode(user.getPassword()));
+        }
         user.setUpdated(LocalDateTime.now());
         return repository.save(user);
+    }
+
+    @Override
+    public void updateLastSeen(
+            final String username
+    ) {
+        repository.updateLastSeen(
+                username,
+                LocalDateTime.now()
+        );
     }
 
     @Override
