@@ -19,7 +19,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
-import java.util.Set;
 import java.util.UUID;
 
 @Service
@@ -66,7 +65,6 @@ public class UserServiceImpl implements UserService {
         return repository.findAll(
                 Specification.allOf(
                         UserSpec.containsUsername(criteria.getQuery()),
-                        UserSpec.hasRole(criteria.getRole()),
                         UserSpec.hasStatus(criteria.getStatus())
                 ),
                 criteria.getPageable()
@@ -85,7 +83,6 @@ public class UserServiceImpl implements UserService {
         }
         entity.setPassword(passwordEncoder.encode(entity.getPassword()));
         entity.setStatus(Status.NOT_ACTIVE);
-        entity.setUserRoles(Set.of(User.Role.ROLE_USER));
         entity.setLastSeen(LocalDateTime.now());
         return repository.save(entity);
     }

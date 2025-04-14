@@ -13,7 +13,6 @@ import java.util.Objects;
 @SuperBuilder
 public final class UserCriteria extends Criteria {
 
-    private User.Role role;
     private User.SortType sort;
 
     public abstract static class UserCriteriaBuilder<
@@ -23,16 +22,6 @@ public final class UserCriteria extends Criteria {
 
         public UserCriteriaBuilder() {
             this.sort = User.SortType.CREATED;
-        }
-
-        public B role(
-                final User.Role role
-        ) {
-            this.role = Objects.requireNonNullElse(
-                    role,
-                    User.Role.ROLE_USER
-            );
-            return self();
         }
 
         public B sort(

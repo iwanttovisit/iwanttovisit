@@ -8,11 +8,9 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 @Data
 public class JwtUser implements UserDetails {
@@ -30,18 +28,9 @@ public class JwtUser implements UserDetails {
                 user.getId(),
                 user.getUsername(),
                 user.getPassword(),
-                mapToGrantedAuthorities(new ArrayList<>(user.getUserRoles())),
+                List.of(new SimpleGrantedAuthority("ROLE_USER")),
                 user.getStatus()
         );
-    }
-
-    private static List<GrantedAuthority> mapToGrantedAuthorities(
-            final List<User.Role> userRoles
-    ) {
-        return userRoles.stream()
-                .map(Enum::name)
-                .map(SimpleGrantedAuthority::new).
-                collect(Collectors.toList());
     }
 
     private JwtUser(
