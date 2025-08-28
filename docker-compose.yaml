@@ -1,0 +1,40 @@
+version: '3.0'
+
+networks:
+  reviewer:
+    driver: bridge
+
+volumes:
+  db-data:
+
+services:
+  backend:
+    build: .
+    platform: linux/amd64
+    container_name: iwts-backend
+    restart: always
+    ports:
+      - '8080:8080'
+    networks:
+      - reviewer
+    depends_on:
+      - postgres
+    environment:
+      - HOST=postgres:5432
+    env_file:
+      - .env
+    volumes:
+      - ./logs/core:/logs/core
+
+  postgres:
+    image: 'postgis/postgis:15-3.4-alpine'
+    container_name: iwts-postgres
+    restart: always
+    ports:
+      - "5437:5432"
+    networks:
+      - reviewer
+    env_file:
+      - .env
+    volumes:
+      - db-data:/var/lib/postgresql/data
