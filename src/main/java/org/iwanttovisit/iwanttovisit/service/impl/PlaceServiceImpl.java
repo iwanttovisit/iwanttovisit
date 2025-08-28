@@ -93,30 +93,4 @@ public class PlaceServiceImpl implements PlaceService {
         }
     }
 
-    @Override
-    @Transactional
-    public void block(
-            final UUID id
-    ) {
-        Place place = getById(id);
-        if (place.getStatus() != Status.DELETED) {
-            place.setStatus(Status.BLOCKED);
-            place.setUpdated(LocalDateTime.now());
-            repository.save(place);
-        }
-    }
-
-    @Override
-    @Transactional
-    public void unblock(
-            final UUID id
-    ) {
-        Place place = getById(id, true);
-        if (place.getStatus() == Status.BLOCKED) {
-            place.setStatus(Status.ACTIVE);
-            place.setUpdated(LocalDateTime.now());
-            repository.save(place);
-        }
-    }
-
 }

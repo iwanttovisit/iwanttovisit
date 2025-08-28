@@ -87,30 +87,4 @@ public class ReviewServiceImpl implements ReviewService {
         }
     }
 
-    @Override
-    @Transactional
-    public void block(
-            final UUID id
-    ) {
-        Review review = getById(id);
-        if (review.getStatus() != Status.DELETED) {
-            review.setStatus(Status.BLOCKED);
-            review.setUpdated(LocalDateTime.now());
-            repository.save(review);
-        }
-    }
-
-    @Override
-    @Transactional
-    public void unblock(
-            final UUID id
-    ) {
-        Review review = getById(id, true);
-        if (review.getStatus() == Status.BLOCKED) {
-            review.setStatus(Status.ACTIVE);
-            review.setUpdated(LocalDateTime.now());
-            repository.save(review);
-        }
-    }
-
 }

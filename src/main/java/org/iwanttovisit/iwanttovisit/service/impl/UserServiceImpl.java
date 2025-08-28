@@ -151,30 +151,4 @@ public class UserServiceImpl implements UserService {
         }
     }
 
-    @Override
-    @Transactional
-    public void block(
-            final UUID id
-    ) {
-        User user = getById(id);
-        if (user.getStatus() != Status.DELETED) {
-            user.setStatus(Status.BLOCKED);
-            user.setUpdated(LocalDateTime.now());
-            repository.save(user);
-        }
-    }
-
-    @Override
-    @Transactional
-    public void unblock(
-            final UUID id
-    ) {
-        User user = getById(id, true);
-        if (user.getStatus() == Status.BLOCKED) {
-            user.setStatus(Status.ACTIVE);
-            user.setUpdated(LocalDateTime.now());
-            repository.save(user);
-        }
-    }
-
 }
