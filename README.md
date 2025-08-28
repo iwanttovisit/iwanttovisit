@@ -40,7 +40,7 @@ All core entities extends `BaseEntity` - parent entity with common fields -
 
 ### User
 
-`User` represents a user of an app. Users can register and login into
+`User` represents a user of the app. Users can register and login into
 account to get access to their maps and places.
 
 ### Map
@@ -55,7 +55,7 @@ by default).
 `Place` represents a specific point on map that user wants to visit.
 
 Place has name, description, category, geo coordinates, social network url,
-rating and visited flag. After visiting user can add mark this place as visited
+rating and visited flag. After visiting user can mark this place as visited
 and hide it from results.
 
 By now we have 5 categories:

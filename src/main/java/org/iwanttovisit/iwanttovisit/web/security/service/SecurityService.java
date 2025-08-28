@@ -6,14 +6,18 @@ import java.util.UUID;
 
 public interface SecurityService {
 
-    boolean isAuthenticated();
-
     UUID getUserIdFromRequest();
 
     User getUserFromRequest();
 
-    boolean canAccessUser(
-            UUID userId
+    boolean hasAccess(
+            UUID entityId,
+            String className
+    );
+
+    boolean canRead(
+            UUID entityId,
+            String className
     );
 
 }
