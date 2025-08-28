@@ -1,15 +1,19 @@
 package org.iwanttovisit.iwanttovisit.web.controller;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.iwanttovisit.iwanttovisit.model.Map;
 import org.iwanttovisit.iwanttovisit.model.User;
+import org.iwanttovisit.iwanttovisit.model.criteria.MapCriteria;
 import org.iwanttovisit.iwanttovisit.service.MapService;
 import org.iwanttovisit.iwanttovisit.web.dto.MapDto;
 import org.iwanttovisit.iwanttovisit.web.dto.OnCreate;
 import org.iwanttovisit.iwanttovisit.web.dto.OnUpdate;
 import org.iwanttovisit.iwanttovisit.web.dto.mappers.MapMapper;
 import org.iwanttovisit.iwanttovisit.web.security.service.SecurityService;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -18,6 +22,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -27,13 +32,42 @@ import java.util.UUID;
 @RequestMapping("/api/v1/maps")
 @RequiredArgsConstructor
 @Validated
+@Slf4j
 public class MapController {
 
     private final MapService mapService;
     private final SecurityService securityService;
     private final MapMapper mapMapper;
 
+    @GetMapping
+    public Page<MapDto> getAllByCriteria(
+            @RequestParam(required = false)
+            final Boolean isPublic,
+            @RequestParam(required = false)
+            final UUID author,
+            @RequestParam(required = false)
+            final Map.SortType sort
+    ) {
+        MapCriteria criteria;
+        UUID userId = securityService.getUserIdFromRequest();
+        if (author != null && userId != null && !author.equals(userId)) {
+            criteria = MapCriteria.builder()
+                    .isPublic(isPublic)
+                    .sort(sort)
+                    .build();
+        } else {
+            criteria = MapCriteria.builder()
+                    .isPublic(isPublic)
+                    .author(author)
+                    .sort(sort)
+                    .build();
+        }
+        Page<Map> maps = mapService.getAll(criteria);
+        return maps.map(mapMapper::toDto);
+    }
+
     @PostMapping
+    @PreAuthorize("isAuthenticated()")
     public MapDto create(
             @RequestBody
             @Validated(OnCreate.class)
@@ -43,10 +77,16 @@ public class MapController {
         User user = securityService.getUserFromRequest();
         map.setAuthor(user);
         mapService.create(map);
+        log.warn(
+                "Map {} is created by user {}.",
+                map.getId(),
+                user.getId()
+        );
         return mapMapper.toDto(map);
     }
 
     @PutMapping
+    @PreAuthorize("@ss.hasAccess(#dto.id, 'Map')")
     public MapDto update(
             @RequestBody
             @Validated(OnUpdate.class)
@@ -54,10 +94,16 @@ public class MapController {
     ) {
         Map map = mapMapper.toEntity(dto);
         mapService.update(map);
+        log.warn(
+                "Map {} is updated by user {}.",
+                dto.getId(),
+                securityService.getUserIdFromRequest()
+        );
         return mapMapper.toDto(map);
     }
 
     @GetMapping("/{id}")
+    @PreAuthorize("@ss.canRead(#id, 'Map')")
     public MapDto getById(
             @PathVariable
             final UUID id
@@ -67,12 +113,18 @@ public class MapController {
     }
 
     @DeleteMapping("/{id}")
+    @PreAuthorize("@ss.hasAccess(#id, 'Map')")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void delete(
             @PathVariable
             final UUID id
     ) {
         mapService.delete(id);
+        log.warn(
+                "Map {} is deleted by user {}.",
+                id,
+                securityService.getUserIdFromRequest()
+        );
     }
 
 }
