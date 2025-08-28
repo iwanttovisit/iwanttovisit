@@ -76,6 +76,7 @@ public class PlaceServiceImpl implements PlaceService {
         place.setCategory(entity.getCategory());
         place.setVisited(entity.isVisited());
         place.setCoordinates(entity.getCoordinates());
+        place.setMap(entity.getMap());
         place.setUpdated(LocalDateTime.now());
         return repository.save(place);
     }
