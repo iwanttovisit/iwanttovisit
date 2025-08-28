@@ -2,12 +2,18 @@ package org.iwanttovisit.iwanttovisit.web.controller;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.iwanttovisit.iwanttovisit.model.Map;
 import org.iwanttovisit.iwanttovisit.model.User;
+import org.iwanttovisit.iwanttovisit.model.criteria.MapCriteria;
+import org.iwanttovisit.iwanttovisit.service.MapService;
 import org.iwanttovisit.iwanttovisit.service.UserService;
+import org.iwanttovisit.iwanttovisit.web.dto.MapDto;
 import org.iwanttovisit.iwanttovisit.web.dto.OnUpdate;
 import org.iwanttovisit.iwanttovisit.web.dto.UserDto;
+import org.iwanttovisit.iwanttovisit.web.dto.mappers.MapMapper;
 import org.iwanttovisit.iwanttovisit.web.dto.mappers.UserMapper;
 import org.iwanttovisit.iwanttovisit.web.security.service.SecurityService;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
@@ -17,6 +23,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -30,8 +37,10 @@ import java.util.UUID;
 public class UserController {
 
     private final UserService userService;
+    private final MapService mapService;
     private final SecurityService securityService;
     private final UserMapper userMapper;
+    private final MapMapper mapMapper;
 
     @PutMapping
     @PreAuthorize("#ss.hasAccess(#dto.id, 'User')")
@@ -58,6 +67,26 @@ public class UserController {
     ) {
         User user = userService.getById(id);
         return userMapper.toDto(user);
+    }
+
+    @GetMapping("/{id}/maps")
+    public Page<MapDto> getAllMapsByCriteria(
+            @RequestParam(required = false)
+            final String query,
+            @RequestParam(required = false)
+            final Boolean isPublic,
+            @RequestParam(required = false)
+            final Map.SortType sort
+    ) {
+        UUID userId = securityService.getUserIdFromRequest();
+        MapCriteria criteria = MapCriteria.builder()
+                .query(query)
+                .isPublic(isPublic)
+                .author(userId)
+                .sort(sort)
+                .build();
+        Page<Map> maps = mapService.getAll(criteria);
+        return maps.map(mapMapper::toDto);
     }
 
     @DeleteMapping("/{id}")

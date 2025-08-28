@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.iwanttovisit.iwanttovisit.model.Map;
 import org.iwanttovisit.iwanttovisit.model.User;
 import org.iwanttovisit.iwanttovisit.service.MapService;
+import org.iwanttovisit.iwanttovisit.service.PlaceService;
 import org.iwanttovisit.iwanttovisit.web.security.JwtUser;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -17,6 +18,7 @@ import java.util.function.Function;
 public class SecurityServiceImpl implements SecurityService {
 
     private final MapService mapService;
+    private final PlaceService placeService;
 
     @Override
     public UUID getUserIdFromRequest() {
@@ -55,6 +57,13 @@ public class SecurityServiceImpl implements SecurityService {
                             true
                     ).getAuthor()
             );
+            case "Place" -> canAccessObject(
+                    entityId,
+                    id -> placeService.getById(
+                            id,
+                            true
+                    ).getAuthor()
+            );
             default -> false;
         };
     }
@@ -67,6 +76,7 @@ public class SecurityServiceImpl implements SecurityService {
         return switch (className) {
             case "User" -> hasAccess(entityId, "User");
             case "Map" -> canReadMap(entityId);
+            case "Place" -> hasAccess(entityId, "Place");
             default -> false;
         };
     }
