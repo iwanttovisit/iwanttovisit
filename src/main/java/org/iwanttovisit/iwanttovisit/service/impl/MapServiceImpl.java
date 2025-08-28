@@ -89,30 +89,4 @@ public class MapServiceImpl implements MapService {
         }
     }
 
-    @Override
-    @Transactional
-    public void block(
-            final UUID id
-    ) {
-        Map map = getById(id);
-        if (map.getStatus() != Status.DELETED) {
-            map.setStatus(Status.BLOCKED);
-            map.setUpdated(LocalDateTime.now());
-            repository.save(map);
-        }
-    }
-
-    @Override
-    @Transactional
-    public void unblock(
-            final UUID id
-    ) {
-        Map map = getById(id, true);
-        if (map.getStatus() == Status.BLOCKED) {
-            map.setStatus(Status.ACTIVE);
-            map.setUpdated(LocalDateTime.now());
-            repository.save(map);
-        }
-    }
-
 }
