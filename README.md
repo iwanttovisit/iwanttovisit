@@ -1,6 +1,9 @@
 # I Want To Visit
 
-**IWantToVisit** - is where you can add places on map and don't forget about it.
+**IWantToVisit** - is where you can add places on map you want to visit an
+don't forget about them.
+
+Check [our website](https://iwanttosee.org) to use this app.
 
 **Content:**
 
@@ -74,7 +77,11 @@ Review has text and mark that changes place's rating.
 
 ## API
 
-We will add more information a bit later.
+We use Swagger to describe API of the app.
+
+You can see all APIs of the project
+on [this page (on local setup)](http://localhost:8080/swagger-ui/index.html)
+or [this page (on production server)](https://iwanttovisit.org/swagger-ui/index.html).
 
 ## Contribution
 

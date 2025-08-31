@@ -1,5 +1,8 @@
 package org.iwanttovisit.iwanttovisit.web.controller;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.iwanttovisit.iwanttovisit.model.Category;
@@ -36,6 +39,10 @@ import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/v1/maps")
+@Tag(
+        name = "MapController",
+        description = "API for maps"
+)
 @RequiredArgsConstructor
 @Validated
 @Slf4j
@@ -48,12 +55,16 @@ public class MapController {
     private final PlaceMapper placeMapper;
 
     @GetMapping
+    @Operation(summary = "Get page of maps by criteria")
     public Page<MapDto> getAllByCriteria(
             @RequestParam(required = false)
+            @Parameter(description = "Search query")
             final String query,
             @RequestParam(required = false)
+            @Parameter(description = "Publicity flag")
             final Boolean isPublic,
             @RequestParam(required = false)
+            @Parameter(description = "Sort of results")
             final Map.SortType sort
     ) {
         MapCriteria criteria = MapCriteria.builder()
@@ -66,6 +77,7 @@ public class MapController {
     }
 
     @PostMapping
+    @Operation(summary = "Create new map")
     @PreAuthorize("isAuthenticated()")
     public MapDto create(
             @RequestBody
@@ -85,6 +97,7 @@ public class MapController {
     }
 
     @PutMapping
+    @Operation(summary = "Update existing map")
     @PreAuthorize("@ss.hasAccess(#dto.id, 'Map')")
     public MapDto update(
             @RequestBody
@@ -102,6 +115,7 @@ public class MapController {
     }
 
     @GetMapping("/{id}")
+    @Operation(summary = "Get map by id")
     @PreAuthorize("@ss.canRead(#id, 'Map')")
     public MapDto getById(
             @PathVariable
@@ -112,41 +126,52 @@ public class MapController {
     }
 
     @GetMapping("/{id}/places")
+    @Operation(summary = "Get map's places by its id and criteria")
     @PreAuthorize("@ss.canRead(#id, 'Map')")
     public Page<PlaceDto> getPlacesById(
             @PathVariable
             final UUID id,
             @RequestParam(required = false)
+            @Parameter(description = "Search query")
             final String query,
             @RequestParam(required = false)
+            @Parameter(description = "Visited flag")
             final Boolean isVisited,
             @RequestParam(required = false)
+            @Parameter(description = "Category of places on map")
             final Category category,
             @RequestParam(required = false)
+            @Parameter(description = "Latitude of the center of map")
             final double latitude,
             @RequestParam(required = false)
+            @Parameter(description = "Longitude of the center of map")
             final double longitude,
             @RequestParam(
                     name = "bounds[0][0]",
                     required = false
             )
+            @Parameter(description = "Latitude of top left corner of map")
             final double minLatitude,
             @RequestParam(
                     name = "bounds[0][1]",
                     required = false
             )
+            @Parameter(description = "Longitude of top left corner of map")
             final double minLongitude,
             @RequestParam(
                     name = "bounds[1][0]",
                     required = false
             )
+            @Parameter(description = "Latitude of bottom right corner of map")
             final double maxLatitude,
             @RequestParam(
                     name = "bounds[1][1]",
                     required = false
             )
+            @Parameter(description = "Longitude of bottom right corner of map")
             final double maxLongitude,
             @RequestParam(required = false)
+            @Parameter(description = "Sort for results")
             final Place.SortType sort
     ) {
         Page<Place> places = placeService.getAll(
@@ -168,6 +193,7 @@ public class MapController {
     }
 
     @DeleteMapping("/{id}")
+    @Operation(summary = "Delete map by id")
     @PreAuthorize("@ss.hasAccess(#id, 'Map')")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void delete(
