@@ -1,6 +1,7 @@
 package org.iwanttovisit.iwanttovisit.web.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.groups.ConvertGroup;
@@ -10,12 +11,11 @@ import lombok.ToString;
 import org.hibernate.validator.constraints.Length;
 import org.iwanttovisit.iwanttovisit.model.Category;
 import org.iwanttovisit.iwanttovisit.model.Constants;
-import org.iwanttovisit.iwanttovisit.model.Map;
-import org.iwanttovisit.iwanttovisit.model.User;
 
 @Getter
 @Setter
 @ToString(callSuper = true)
+@Schema(description = "Object of place on map")
 public class PlaceDto extends BaseEntityDto {
 
     @NotNull(
@@ -27,6 +27,7 @@ public class PlaceDto extends BaseEntityDto {
             message = "Length must be less than {max} symbols.",
             groups = {OnCreate.class, OnUpdate.class}
     )
+    @Schema(description = "Name of the place")
     private String name;
 
     @Length(
@@ -34,6 +35,7 @@ public class PlaceDto extends BaseEntityDto {
             message = "Length must be less than {max} symbols.",
             groups = {OnCreate.class, OnUpdate.class}
     )
+    @Schema(description = "Description of the place")
     private String description;
 
     @Length(
@@ -45,6 +47,7 @@ public class PlaceDto extends BaseEntityDto {
             message = "Coordinates can't be null.",
             groups = {OnCreate.class, OnUpdate.class}
     )
+    @Schema(description = "Coordinates of the place")
     private String coordinates;
 
     @Length(
@@ -52,21 +55,25 @@ public class PlaceDto extends BaseEntityDto {
             message = "Length must be less than {max} symbols.",
             groups = {OnCreate.class, OnUpdate.class}
     )
+    @Schema(description = "Social networks url")
     private String url;
 
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
+    @Schema(description = "Rating of the place")
     private float rating;
 
     @NotNull(
             message = "Category can't be null.",
             groups = {OnCreate.class, OnUpdate.class}
     )
+    @Schema(description = "Category of the place")
     private Category category;
 
     @NotNull(
             message = "Visited mark can't be null.",
             groups = {OnCreate.class, OnUpdate.class}
     )
+    @Schema(description = "Visited flag of the place")
     private boolean isVisited;
 
     @NotNull(
@@ -76,9 +83,11 @@ public class PlaceDto extends BaseEntityDto {
     @Valid
     @ConvertGroup(from = OnCreate.class, to = NestedObjectId.class)
     @ConvertGroup(from = OnUpdate.class, to = NestedObjectId.class)
-    private Map map;
+    @Schema(description = "Map of the place")
+    private MapDto map;
 
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
-    private User author;
+    @Schema(description = "Author of the place")
+    private UserDto author;
 
 }

@@ -1,5 +1,7 @@
 package org.iwanttovisit.iwanttovisit.web.controller;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.iwanttovisit.iwanttovisit.model.Place;
@@ -27,6 +29,10 @@ import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/v1/places")
+@Tag(
+        name = "PlaceController",
+        description = "API for places"
+)
 @RequiredArgsConstructor
 @Validated
 @Slf4j
@@ -37,6 +43,7 @@ public class PlaceController {
     private final PlaceMapper placeMapper;
 
     @PostMapping
+    @Operation(summary = "Create new place on map")
     @PreAuthorize("#ss.hasAccess(#dto.map.id, 'Map')")
     public PlaceDto create(
             @RequestBody
@@ -56,6 +63,7 @@ public class PlaceController {
     }
 
     @PutMapping
+    @Operation(summary = "Update existing place on map")
     @PreAuthorize("#ss.hasAccess(#dto.map.id, 'Map') "
             + "&& #ss.hasAccess(#dto.id, 'Place')")
     public PlaceDto update(
@@ -74,6 +82,7 @@ public class PlaceController {
     }
 
     @GetMapping("/{id}")
+    @Operation(summary = "Get place by id")
     @PreAuthorize("#ss.hasAccess(#id, 'Place')")
     public PlaceDto getById(
             @PathVariable
@@ -84,6 +93,7 @@ public class PlaceController {
     }
 
     @DeleteMapping("/{id}")
+    @Operation(summary = "Delete place by id")
     @PreAuthorize("#ss.hasAccess(#id, 'Place')")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void delete(

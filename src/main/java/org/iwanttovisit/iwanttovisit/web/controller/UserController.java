@@ -1,5 +1,8 @@
 package org.iwanttovisit.iwanttovisit.web.controller;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.iwanttovisit.iwanttovisit.model.Map;
@@ -31,6 +34,10 @@ import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/v1/users")
+@Tag(
+        name = "UserController",
+        description = "API for users"
+)
 @RequiredArgsConstructor
 @Validated
 @Slf4j
@@ -43,6 +50,7 @@ public class UserController {
     private final MapMapper mapMapper;
 
     @PutMapping
+    @Operation(summary = "Update user")
     @PreAuthorize("#ss.hasAccess(#dto.id, 'User')")
     public UserDto update(
             @Validated(OnUpdate.class)
@@ -60,6 +68,7 @@ public class UserController {
     }
 
     @GetMapping("/{id}")
+    @Operation(summary = "Get user by id")
     @PreAuthorize("#ss.hasAccess(#id, 'User')")
     public UserDto getById(
             @PathVariable
@@ -70,12 +79,16 @@ public class UserController {
     }
 
     @GetMapping("/{id}/maps")
+    @Operation(summary = "Get user's maps by its id")
     public Page<MapDto> getAllMapsByCriteria(
             @RequestParam(required = false)
+            @Parameter(description = "Search query")
             final String query,
             @RequestParam(required = false)
+            @Parameter(description = "Publicity flag")
             final Boolean isPublic,
             @RequestParam(required = false)
+            @Parameter(description = "Sort of results")
             final Map.SortType sort
     ) {
         UUID userId = securityService.getUserIdFromRequest();
@@ -90,6 +103,7 @@ public class UserController {
     }
 
     @DeleteMapping("/{id}")
+    @Operation(summary = "Delete user by id")
     @PreAuthorize("#ss.hasAccess(#id, 'User')")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void delete(
