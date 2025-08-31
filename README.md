@@ -1,6 +1,6 @@
 # I Want To Visit
 
-**IWantToVisit** - is where you can add places on map you want to visit an
+**IWantToVisit** - is where you can add places you want to visit on map and
 don't forget about them.
 
 Check [our website](https://iwanttosee.org) to use this app.
