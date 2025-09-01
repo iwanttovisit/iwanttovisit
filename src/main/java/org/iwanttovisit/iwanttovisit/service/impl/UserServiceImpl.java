@@ -1,7 +1,11 @@
 package org.iwanttovisit.iwanttovisit.service.impl;
 
+import io.github.ilyalisov.jwt.config.TokenParameters;
 import io.github.ilyalisov.jwt.service.TokenService;
+import io.github.ilyalisov.mail.config.MailParameters;
+import io.github.ilyalisov.mail.service.MailService;
 import lombok.RequiredArgsConstructor;
+import org.iwanttovisit.iwanttovisit.model.MailType;
 import org.iwanttovisit.iwanttovisit.model.Status;
 import org.iwanttovisit.iwanttovisit.model.User;
 import org.iwanttovisit.iwanttovisit.model.criteria.UserCriteria;
@@ -11,6 +15,7 @@ import org.iwanttovisit.iwanttovisit.model.exception.TokenNotValidException;
 import org.iwanttovisit.iwanttovisit.repository.UserRepository;
 import org.iwanttovisit.iwanttovisit.repository.spec.UserSpec;
 import org.iwanttovisit.iwanttovisit.service.UserService;
+import org.iwanttovisit.iwanttovisit.web.security.JwtProperties;
 import org.iwanttovisit.iwanttovisit.web.security.TokenType;
 import org.springframework.data.domain.Page;
 import org.springframework.data.jpa.domain.Specification;
@@ -28,6 +33,8 @@ public class UserServiceImpl implements UserService {
 
     private final UserRepository repository;
     private final TokenService jwtService;
+    private final MailService mailService;
+    private final JwtProperties jwtProperties;
     private final PasswordEncoder passwordEncoder;
 
     @Override
@@ -84,15 +91,39 @@ public class UserServiceImpl implements UserService {
         entity.setPassword(passwordEncoder.encode(entity.getPassword()));
         entity.setStatus(Status.NOT_ACTIVE);
         entity.setLastSeen(LocalDateTime.now());
-        return repository.save(entity);
+        repository.save(entity);
+        String token = jwtService.create(
+                TokenParameters.builder(
+                                entity.getUsername(),
+                                TokenType.ACTIVATION.name(),
+                                jwtProperties.getActivation()
+                        )
+                        .claim("userId", entity.getId())
+                        .build()
+        );
+        MailParameters params = MailParameters.builder(
+                        entity.getUsername(),
+                        MailType.ACTIVATION.name()
+                )
+                .property("token", token)
+                .property(
+                        "name",
+                        entity.getName() != null
+                                ? entity.getName()
+                                : "User"
+                )
+                .build();
+        mailService.send(params);
+        return entity;
     }
 
     @Override
+    @Transactional
     public void activate(
             final String token
     ) {
         if (jwtService.isExpired(token)) {
-            throw new TokenNotValidException("Token expired.");
+            throw new TokenNotValidException("Token is expired.");
         }
         if (!jwtService.getType(token).equals(TokenType.ACTIVATION.name())) {
             throw new TokenNotValidException("Token type is incorrect.");
@@ -129,6 +160,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    @Transactional
     public void updateLastSeen(
             final String username
     ) {
