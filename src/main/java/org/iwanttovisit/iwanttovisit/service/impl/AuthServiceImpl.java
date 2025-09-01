@@ -2,7 +2,10 @@ package org.iwanttovisit.iwanttovisit.service.impl;
 
 import io.github.ilyalisov.jwt.config.TokenParameters;
 import io.github.ilyalisov.jwt.service.TokenService;
+import io.github.ilyalisov.mail.config.MailParameters;
+import io.github.ilyalisov.mail.service.MailService;
 import lombok.RequiredArgsConstructor;
+import org.iwanttovisit.iwanttovisit.model.MailType;
 import org.iwanttovisit.iwanttovisit.model.User;
 import org.iwanttovisit.iwanttovisit.model.exception.TokenNotValidException;
 import org.iwanttovisit.iwanttovisit.service.AuthService;
@@ -15,7 +18,6 @@ import org.iwanttovisit.iwanttovisit.web.security.JwtProperties;
 import org.iwanttovisit.iwanttovisit.web.security.TokenType;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -27,8 +29,8 @@ import java.util.UUID;
 public class AuthServiceImpl implements AuthService {
 
     private final UserService userService;
-    private final PasswordEncoder passwordEncoder;
     private final TokenService jwtService;
+    private final MailService mailService;
     private final JwtProperties jwtProperties;
     private final AuthenticationManager authenticationManager;
 
@@ -116,7 +118,32 @@ public class AuthServiceImpl implements AuthService {
     public void sendResetEmail(
             final String email
     ) {
-        //TODO implement after email is added
+        User user = userService.getByUsername(email);
+        String token = jwtService.create(
+                TokenParameters.builder(
+                                email,
+                                TokenType.PASSWORD_RESET.name(),
+                                jwtProperties.getReset()
+                        )
+                        .claim(
+                                "userId",
+                                user.getId()
+                        )
+                        .build()
+        );
+        MailParameters params = MailParameters.builder(
+                        user.getUsername(),
+                        MailType.PASSWORD_RESET.name()
+                )
+                .property("token", token)
+                .property(
+                        "name",
+                        user.getName() != null
+                                ? user.getName()
+                                : "User"
+                )
+                .build();
+        mailService.send(params);
     }
 
     @Override
@@ -125,19 +152,17 @@ public class AuthServiceImpl implements AuthService {
             final PasswordResetDto dto
     ) {
         if (jwtService.isExpired(dto.getToken())) {
-            throw new TokenNotValidException("Токен устарел.");
+            throw new TokenNotValidException("Token is expired.");
         }
         if (!jwtService.getType(dto.getToken())
                 .equals(TokenType.PASSWORD_RESET.name())) {
-            throw new TokenNotValidException("Неверный тип токена.");
+            throw new TokenNotValidException("Token type is incorrect.");
         }
         UUID userId = UUID.fromString(
                 (String) jwtService.claim(dto.getToken(), "userId")
         );
-        User user = new User(userId);
-        user.setPassword(
-                passwordEncoder.encode(dto.getNewPassword())
-        );
+        User user = userService.getById(userId);
+        user.setPassword(dto.getNewPassword());
         userService.update(user);
     }
 
