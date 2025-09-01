@@ -12,6 +12,25 @@ spring:
     url: jdbc:postgresql://${HOST}/${POSTGRES_DB}
     change-log: classpath:db/db.changelog.yaml
     enabled: true
+  mail:
+    username: ${SPRING_MAIL_USERNAME}
+    password: ${SPRING_MAIL_PASSWORD}
+    vendor: ${SPRING_MAIL_VENDOR}
+    templates:
+      - type: ACTIVATION
+        defaultSubject: "Welcome to IWantToVisit.org!"
+        template: "activation.ftlh"
+        properties:
+          mainLink: ${MAIL_MAIN_LINK}
+          mainDomainName: ${MAIL_DOMAIN}
+          link: ${MAIL_ACTIVATION_LINK}
+      - type: PASSWORD_RESET
+        defaultSubject: "Password resetting on IWantToVisit.org"
+        template: "restore.ftlh"
+        properties:
+          mainLink: ${MAIL_MAIN_LINK}
+          mainDomainName: ${MAIL_DOMAIN}
+          link: ${MAIL_RESTORE_LINK}
   jpa:
     hibernate:
       ddl-auto: none

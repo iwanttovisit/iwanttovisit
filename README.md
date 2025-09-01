@@ -1,6 +1,9 @@
 # I Want To Visit
 
-**IWantToVisit** - is where you can add places on map and don't forget about it.
+**IWantToVisit** - is where you can add places you want to visit on map and
+don't forget about them.
+
+Check [our website](https://iwanttosee.org) to use this app.
 
 **Content:**
 
@@ -40,7 +43,7 @@ All core entities extends `BaseEntity` - parent entity with common fields -
 
 ### User
 
-`User` represents a user of an app. Users can register and login into
+`User` represents a user of the app. Users can register and login into
 account to get access to their maps and places.
 
 ### Map
@@ -55,7 +58,7 @@ by default).
 `Place` represents a specific point on map that user wants to visit.
 
 Place has name, description, category, geo coordinates, social network url,
-rating and visited flag. After visiting user can add mark this place as visited
+rating and visited flag. After visiting user can mark this place as visited
 and hide it from results.
 
 By now we have 5 categories:
@@ -74,7 +77,11 @@ Review has text and mark that changes place's rating.
 
 ## API
 
-We will add more information a bit later.
+We use Swagger to describe API of the app.
+
+You can see all APIs of the project
+on [this page (on local setup)](http://localhost:8080/swagger-ui/index.html)
+or [this page (on production server)](https://iwanttovisit.org/swagger-ui/index.html).
 
 ## Contribution
 

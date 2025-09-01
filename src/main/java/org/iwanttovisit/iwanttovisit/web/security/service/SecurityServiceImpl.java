@@ -1,36 +1,24 @@
 package org.iwanttovisit.iwanttovisit.web.security.service;
 
 import lombok.RequiredArgsConstructor;
+import org.iwanttovisit.iwanttovisit.model.Map;
 import org.iwanttovisit.iwanttovisit.model.User;
+import org.iwanttovisit.iwanttovisit.service.MapService;
+import org.iwanttovisit.iwanttovisit.service.PlaceService;
 import org.iwanttovisit.iwanttovisit.web.security.JwtUser;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.util.UUID;
+import java.util.function.Function;
 
 @Service("ss")
 @RequiredArgsConstructor
 public class SecurityServiceImpl implements SecurityService {
 
-    @Override
-    public boolean isAuthenticated() {
-        Authentication authentication = SecurityContextHolder.getContext()
-                .getAuthentication();
-        return authentication.isAuthenticated()
-                && !authentication.getPrincipal().equals("anonymousUser");
-    }
-
-    @Override
-    public boolean canAccessUser(
-            final UUID userId
-    ) {
-        if (userId == null) {
-            return false;
-        }
-        UUID userIdFromRequest = getUserIdFromRequest();
-        return userId.equals(userIdFromRequest);
-    }
+    private final MapService mapService;
+    private final PlaceService placeService;
 
     @Override
     public UUID getUserIdFromRequest() {
@@ -53,6 +41,75 @@ public class SecurityServiceImpl implements SecurityService {
             return null;
         }
         return new User(userId);
+    }
+
+    @Override
+    public boolean hasAccess(
+            final UUID entityId,
+            final String className
+    ) {
+        return switch (className) {
+            case "User" -> canAccessUser(entityId);
+            case "Map" -> canAccessObject(
+                    entityId,
+                    id -> mapService.getById(
+                            id,
+                            true
+                    ).getAuthor()
+            );
+            case "Place" -> canAccessObject(
+                    entityId,
+                    id -> placeService.getById(
+                            id,
+                            true
+                    ).getAuthor()
+            );
+            default -> false;
+        };
+    }
+
+    @Override
+    public boolean canRead(
+            final UUID entityId,
+            final String className
+    ) {
+        return switch (className) {
+            case "User" -> hasAccess(entityId, "User");
+            case "Map" -> canReadMap(entityId);
+            case "Place" -> hasAccess(entityId, "Place");
+            default -> false;
+        };
+    }
+
+    private boolean canAccessUser(
+            final UUID userId
+    ) {
+        if (userId == null) {
+            return false;
+        }
+        UUID userIdFromRequest = getUserIdFromRequest();
+        return userId.equals(userIdFromRequest);
+    }
+
+    private boolean canAccessObject(
+            final UUID objectId,
+            final Function<UUID, User> getUserFunction
+    ) {
+        UUID userId = getUserIdFromRequest();
+        if (userId == null) {
+            return false;
+        }
+        return getUserFunction.apply(objectId).getId().equals(userId);
+    }
+
+    private boolean canReadMap(
+            final UUID mapId
+    ) {
+        Map map = mapService.getById(mapId);
+        return map.isPublic() || canAccessObject(
+                mapId,
+                id -> map.getAuthor()
+        );
     }
 
 }

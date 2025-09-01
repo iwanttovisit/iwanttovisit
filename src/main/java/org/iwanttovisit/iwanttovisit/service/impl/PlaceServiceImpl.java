@@ -76,6 +76,7 @@ public class PlaceServiceImpl implements PlaceService {
         place.setCategory(entity.getCategory());
         place.setVisited(entity.isVisited());
         place.setCoordinates(entity.getCoordinates());
+        place.setMap(entity.getMap());
         place.setUpdated(LocalDateTime.now());
         return repository.save(place);
     }
@@ -88,32 +89,6 @@ public class PlaceServiceImpl implements PlaceService {
         Place place = getById(id, true);
         if (place.getStatus() != Status.DELETED) {
             place.setStatus(Status.DELETED);
-            place.setUpdated(LocalDateTime.now());
-            repository.save(place);
-        }
-    }
-
-    @Override
-    @Transactional
-    public void block(
-            final UUID id
-    ) {
-        Place place = getById(id);
-        if (place.getStatus() != Status.DELETED) {
-            place.setStatus(Status.BLOCKED);
-            place.setUpdated(LocalDateTime.now());
-            repository.save(place);
-        }
-    }
-
-    @Override
-    @Transactional
-    public void unblock(
-            final UUID id
-    ) {
-        Place place = getById(id, true);
-        if (place.getStatus() == Status.BLOCKED) {
-            place.setStatus(Status.ACTIVE);
             place.setUpdated(LocalDateTime.now());
             repository.save(place);
         }
