@@ -35,7 +35,7 @@
 		<mapstruct.version>1.5.5.Final</mapstruct.version>
 		<springdoc.version>2.6.0</springdoc.version>
 		<checkstyle.version>3.4.0</checkstyle.version>
-		<jacoco.version>0.8.12</jacoco.version>
+		<jacoco.version>0.8.13</jacoco.version>
 		<jwt.version>0.3.0</jwt.version>
 	</properties>
 
