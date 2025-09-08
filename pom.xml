@@ -63,7 +63,7 @@
 		<checkstyle.version>3.6.0</checkstyle.version>
 		<jacoco.version>0.8.13</jacoco.version>
 		<jwt.version>0.3.0</jwt.version>
-		<mail.version>0.2.1</mail.version>
+		<mail.version>0.2.2</mail.version>
 	</properties>
 
 	<dependencies>
