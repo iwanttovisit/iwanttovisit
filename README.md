@@ -8,12 +8,14 @@ Check [our website](https://iwanttosee.org) to use this app.
 **Content:**
 
 * [How to run this project](#how-to-run-this-project)
-* [Entities](#entities)
+* [Backend](#backend)
+  * [Entities](#entities)
     * [User](#user)
     * [Map](#map)
     * [Place](#place)
     * [Review](#review)
-* [API](#api)
+  * [API](#api)
+* [Frontend](#frontend)
 * [Contribution](#contribution)
 
 ## How to run this project
@@ -34,26 +36,30 @@ To start an app with its dependencies run this command:
 docker compose up -d
 ```
 
-## Entities
+## Backend
+
+This part describes backend application of the project.
+
+### Entities
 
 This app have some core entities.
 
 All core entities extends `BaseEntity` - parent entity with common fields -
 `id`, `status`, `created` and `updated` properties.
 
-### User
+#### User
 
 `User` represents a user of the app. Users can register and login into
 account to get access to their maps and places.
 
-### Map
+#### Map
 
 `Map` represents a set of places that user wants to visit.
 
 These objects have title, description and author. It can be public or private (
 by default).
 
-### Place
+#### Place
 
 `Place` represents a specific point on map that user wants to visit.
 
@@ -69,19 +75,23 @@ By now we have 5 categories:
 * `ENTARTAINMENT` - attractions, clubs
 * `NATURE` - beautiful sides, forests and parks
 
-### Review
+#### Review
 
 `Review` represents user`s review about its places.
 
 Review has text and mark that changes place's rating.
 
-## API
+### API
 
 We use Swagger to describe API of the app.
 
 You can see all APIs of the project
 on [this page (on local setup)](http://localhost:8080/swagger-ui/index.html)
 or [this page (on production server)](https://iwanttovisit.org/swagger-ui/index.html).
+
+## Frontend
+
+This part describes frontend application of the project.
 
 ## Contribution
 
