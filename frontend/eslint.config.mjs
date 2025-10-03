@@ -25,6 +25,7 @@ export default [
 			"react/prop-types": "off",
 			"react/no-unescaped-entities": "off",
 			"react/display-name": "off",
+			"react/react-in-jsx-scope": "off"
 		},
 		settings: {
 			react: {
