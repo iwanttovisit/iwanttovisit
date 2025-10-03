@@ -1,0 +1,54 @@
+:root {
+	--base-font-size: 16px;
+}
+
+html {
+	height: 100%;
+}
+
+*,
+*::before,
+*::after {
+	box-sizing: border-box;
+}
+
+body {
+	margin: 0;
+	font-family:
+		-apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen", "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans",
+		"Helvetica Neue", sans-serif;
+	-webkit-font-smoothing: antialiased;
+	font-size: var(--base-font-size);
+	font-weight: 225;
+	line-height: 1.5;
+	height: 100%;
+	display: flex;
+	flex-direction: column;
+	background: rgb(240, 240, 240) !important;
+}
+
+p,
+li,
+a,
+i,
+b,
+span,
+label,
+input {
+	font-size: var(--base-font-size) !important;
+}
+
+p {
+	margin-top: 0;
+	margin-bottom: 1rem;
+}
+
+a {
+	text-decoration: none;
+	color: black !important;
+	cursor: pointer;
+}
+
+button {
+	cursor: pointer;
+}
