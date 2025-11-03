@@ -1,4 +1,4 @@
-import {IBaseEntity} from "./common";
+import {IBaseEntity, ICriteria} from "./common";
 import {IPrivateUser} from "./user";
 
 export interface IMap extends IBaseEntity {
@@ -26,4 +26,34 @@ export enum ICategory {
 	SPORT = "Sport",
 	ENTERTAINMENT = "Entertainment",
 	NATURE = "Nature"
+}
+
+export enum IMapSortType {
+	CREATED = "By created",
+	UPDATED = "By updated",
+	NAME = "By name"
+}
+
+export interface IMapCriteria extends ICriteria {
+	ipPublic?: boolean;
+	author?: string;
+	sort?: IMapSortType;
+}
+
+export enum IPlaceSortType {
+	CREATED = "By created",
+	UPDATED = "By updated",
+	NAME = "By name",
+	RATING = "By rating"
+}
+
+export interface IPlaceCriteria extends ICriteria {
+	isVisited?: boolean;
+	category?: ICategory;
+	author?: string;
+	map?: string;
+	latitude?: number;
+	longitude?: number;
+	bounds?: number[][];
+	sort?: IPlaceSortType;
 }

@@ -24,3 +24,10 @@ export enum IStatus {
 	NOT_ACTIVE = "Not active",
 	DELETED = "Deleted"
 }
+
+export interface ICriteria {
+	pageId?: number;
+	perPage?: number;
+	status?: IStatus;
+	query?: string;
+}
